@@ -21,3 +21,5 @@ ja:
         finished_at: 退勤時間
         note: 備考
         user: ユーザーID
+        overwork: 残業指示
+        person: 指示者
