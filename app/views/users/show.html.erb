@@ -39,9 +39,6 @@ class: "btn btn-default active" %>
         <th colspan="3">退社</th>
         <th rowspan="2">在社時間</th>
         <th rowspan="2">備考</th>
-        <th rowspan="2">残業指示</th>
-        <th rowspan="2">指示者</th>
-
       </tr>
       <tr>
         <th>時</th>
@@ -90,8 +87,6 @@ class: "btn btn-default active" %>
             <% end %>
           </td>
           <td><%= day.note %></td>
-          <td><%= day.overwork %></td>
-          <td><%= day.person %></td>
         </tr>
       <% end %>
     </tbody>
@@ -102,12 +97,20 @@ class: "btn btn-default active" %>
         <td colspan="2">累計日数</td>
         <td colspan="2">総合勤務時間</td>
         <td colspan="2">累計在社時間</td>
-        <td colspan="2"></td>
+        <td colspan="1"></td>
+        <td colspan="1"></td>
+        <td colspan="1"></td>
+        <td colspan="1"></td>
+
       </tr>
       <tr>
         <td colspan="2"><%= @attendances.count%></td>
         <td colspan="2"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
         <td colspan="2"><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="1"></td>
+        <td colspan="1"></td>
+        <td colspan="1"></td>
+        <td colspan="1"></td>
       </tr>
     </tfoot>
   </table>
