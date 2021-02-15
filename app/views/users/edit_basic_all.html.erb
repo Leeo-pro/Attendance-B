@@ -9,7 +9,7 @@
             <%= render 'shared/error_messages', object: @user %>
 
             <%= f.label :指定勤務時間, class: "label-#{yield(:class_text)}" %>
-            <%= f.time_field :basic_time, class: "form-control" %>
+            <%= f.time_field :basic_work_time, class: "form-control" %>
 
             <%= f.label :基本勤務時間, class: "label-#{yield(:class_text)}" %>
             <%= f.time_field :work_time, class: "form-control" %>

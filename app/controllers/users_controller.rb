@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
   
   def index
+    @user = User.new
     @users = User.paginate(page: params[:page], per_page: 20)
     if params[:name].present?
       @users = @users.get_by_name params[:name]
@@ -43,6 +44,7 @@ class UsersController < ApplicationController
       flash[:success] = "ユーザー情報を更新しました。"
       redirect_to @user
     else
+      @users = User.paginate(page: params[:page], per_page: 20)
       render :edit
     end
   end
@@ -68,13 +70,22 @@ class UsersController < ApplicationController
   def edit_basic_all
   end
   
+  def import
+    byebug
+    # fileはtmpに自動で一時保存される
+    User.import(params[:file])
+    redirect_to users_url
+  end
+  
   private
   
     def user_params
-      params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :affiliation, :password, :password_confirmation,
+                                   :employee_number, :uid, :designated_work_start_time, :designated_work_finish_time)
     end
 
     def basic_info_params
-      params.require(:user).permit(:department, :basic_time, :work_time)
+      params.require(:user).permit(:affiliation, :basic_work_time, :work_time,
+                                   :employee_number, :uid, :designated_work_start_time, :designated_work_finish_time)
     end
 end

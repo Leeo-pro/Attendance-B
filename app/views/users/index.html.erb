@@ -4,6 +4,15 @@
 
 <h1>ユーザー一覧</h1>
 
+<%= form_tag import_users_path, multipart: true do %>
+  <%= file_field_tag :file %>
+  <%= submit_tag "インポート" %>
+<% end %>
+
+<input id="filename" readonly type="text" value="" >
+
+
+
 <div class="col-md-10 col-md-offset-1">
   <table class="table table-condensed table-hover" id="table-users">
     <% @users.each do |user| %>
@@ -16,7 +25,7 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h4 class="panel-title">
-                    <button type="button" class="btn btn-primary btn-lg"
+                    <button type="button" id="xxx" class="btn btn-primary btn-lg"
                     data-toggle="collapse" data-target="#collapse<%= user.id %>">
                     編集</button>
                   </h4>
@@ -24,7 +33,11 @@
                 
                 <div id="collapse<%= user.id %>" class="panel-collapse collapse">
                   <div class="panel-body">
-                    <%= render "form2", user: user %>
+                    <% if user != @user %>
+                      <%= render "form2", user: user %>
+                    <% else %>
+                      <%= render "form2", user: @user %>
+                    <% end %>
                   </div>
                 </div>
               </div>
@@ -40,3 +53,12 @@
 
 <!--モーダルウインドウ表示-->
 <div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<% if @user.errors.any? %>
+  <script>
+    window.onload = function(){
+      const xyz = document.querySelector('#xxx')
+      xyz.click();
+    }
+  </script>
+<% end %>

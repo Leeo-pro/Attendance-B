@@ -10,12 +10,12 @@
         class: "btn btn-default btn-xs" %>
       </td>
       <td>指定勤務時間：<%= format_basic_info(@user.work_time) %></td>
-      <td colspan="3">基本時間：<%= format_basic_info(@user.basic_time) %></td>
+      <td colspan="3">基本時間：<%= format_basic_info(@user.basic_work_time) %></td>
       <td>月初日：<%= l(@first_day, format: :short) %></td>
     </tr>
 
     <tr>
-      <td>所属：<%= @user.department.present? ? @user.department : "未所属" %></td>
+      <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
       <td>名前：<%= @user.name %></td>
       <td>コード</td>
       <td></td>

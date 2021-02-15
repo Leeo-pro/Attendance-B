@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       patch 'attendances/update_one_month'
       get 'edit_basic_all'
     end
+    collection { post :import }
     resources :attendances, only: :update
   end
 end
