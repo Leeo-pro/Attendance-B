@@ -71,21 +71,45 @@ class UsersController < ApplicationController
   end
   
   def import
-    byebug
-    # fileはtmpに自動で一時保存される
-    User.import(params[:file])
-    redirect_to users_url
+    if params[:file].blank?
+      flash[:warning] = "CSVファイルが選択されていません。"
+      redirect_to users_url
+    else
+      
+      # fileはtmpに自動で一時保存される
+      User.import(params[:file])
+      flash[:success] = "ユーザー情報をインポートしました。"
+      redirect_to users_url
+    end 
   end
+  
+  def index_attendance
+  
+    @now_employee_number = []
+    @now_name = []
+    date = Date.today
+    User.all.each do |user|
+      if user.attendances.any?{|day|
+        ( day.worked_on == Date.today &&
+          !day.started_at.blank? &&
+          day.finished_at.blank?  )
+      }
+      
+        @now_employee_number.push(user.employee_number)
+        @now_name.push(user.name)
+      end
+    end
+  end  
   
   private
   
     def user_params
       params.require(:user).permit(:name, :email, :affiliation, :password, :password_confirmation,
-                                   :employee_number, :uid, :designated_work_start_time, :designated_work_finish_time)
+                                   :employee_number, :uid, :designated_work_start_time, :designated_work_end_time)
     end
 
     def basic_info_params
       params.require(:user).permit(:affiliation, :basic_work_time, :work_time,
-                                   :employee_number, :uid, :designated_work_start_time, :designated_work_finish_time)
+                                   :employee_number, :uid, :designated_work_start_time, :designated_work_end_time)
     end
 end

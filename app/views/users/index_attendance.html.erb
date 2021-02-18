@@ -1,0 +1,25 @@
+<% provide(:title, 'Work List') %>
+
+<h1>出勤中社員一覧</h1>
+
+<div>
+  <table class="table table-bordered table-condensed table-hover text-center table-striped" id="index_attendance">
+    <thead>
+      <tr>
+        <td>社員番号</td>
+        <td>名前</td>      
+      </tr>
+    </thead>
+
+      <% ary = [@now_employee_number, @now_name].transpose %>
+
+    <tbody>
+      <% ary.each do |key, value| %>
+        <tr>
+          <td><%= key %></td>
+          <td><%= value %></td>      
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
