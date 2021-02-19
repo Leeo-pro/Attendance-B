@@ -21,4 +21,11 @@ Rails.application.routes.draw do
     end
     resources :attendances, only: :update
   end
+  
+  resources :bases do
+    collection do
+      get 'index_area'
+    end
+  end
+
 end

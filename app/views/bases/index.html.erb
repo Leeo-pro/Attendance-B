@@ -1,0 +1,38 @@
+<% provide(:title, 'Area List') %>
+<% provide(:class_text, 'base--edit') %>
+<% provide(:button_text, '更新') %>
+
+
+<h1>拠点一覧</h1>
+
+<div>
+  <table class="table table-bordered table-condensed table-hover table-striped text-center" id="index_area">
+    <thead>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>拠点番号</td>
+        <td>拠点名</td>
+        <td>勤怠種類</td>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>ボタン1</td>
+        <td>ボタン2</td>
+        <td>番号</td>
+        <td>名</td>
+        <td>種類</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="add-info">
+    <%= link_to "拠点情報追加", new_basis_path, remote: true, class: "btn btn-primary" %>    
+  </div>
+</div>
+
+<div id="new" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+

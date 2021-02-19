@@ -84,15 +84,13 @@ class UsersController < ApplicationController
   end
   
   def index_attendance
-  
     @now_employee_number = []
     @now_name = []
-    date = Date.today
     User.all.each do |user|
       if user.attendances.any?{|day|
         ( day.worked_on == Date.today &&
-          !day.started_at.blank? &&
-          day.finished_at.blank?  )
+          day.started_at.present? &&
+          day.finished_at.nil?  )
       }
       
         @now_employee_number.push(user.employee_number)
@@ -100,6 +98,9 @@ class UsersController < ApplicationController
       end
     end
   end  
+  
+  def index_area
+  end
   
   private
   

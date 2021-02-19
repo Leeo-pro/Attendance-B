@@ -1,0 +1,37 @@
+<% provide(:title, 'Area List') %>
+<% provide(:class_text, 'create') %>
+<% provide(:button_text, '追加') %>
+
+
+
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <button type="button" id="xxx" class="btn btn-primary btn-lg" data-toggle="collapse" data-target="#collapse">拠点情報追加</button>
+      </h4>
+    </div>
+    
+    <div id="collapse" class="panel-collapse collapse">
+      <div class="panel-body">
+        <%= form_with(model: @base, local: true, method: get) do |f| %>
+          
+          <%= f.label :base_number, class: "label-#{yield(:class_text)}" %>
+          <%= f.number_field :base_number, class: "form-control" %>
+        
+          <%= f.label :base_name, class: "label-#{yield(:class_text)}" %>
+          <%= f.text_field :base_name, class: "form-control" %>
+        
+          <%= f.label :base_kind, class: "label-#{yield(:class_text)}" %>
+          <%= f.text_field :base_kind, class: "form-control" %>
+          
+          <div id="add-info">
+          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+

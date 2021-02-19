@@ -3,6 +3,7 @@ ja:
     models:
       user: ユーザー
       attendance: 勤怠
+      base: 拠点
     attributes:
       user:
         id: ID
@@ -27,3 +28,7 @@ ja:
         user: ユーザーID
         overwork: 残業指示
         person: 指示者
+      base:
+        base_number: 拠点番号
+        base_name: 拠点名
+        base_kind: 勤怠種類
