@@ -1,0 +1,75 @@
+<% provide(:title, 'Base List') %>
+<% provide(:class_text, 'base--edit') %>
+<% provide(:button_text, '更新') %>
+
+
+<h1>拠点一覧</h1>
+
+<div>
+  <table class="table table-bordered table-condensed table-hover table-striped text-center" id="index_area">
+    <thead>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>拠点番号</td>
+        <td>拠点名</td>
+        <td>勤怠種類</td>
+      </tr>
+    </thead>
+
+    <% @bases.each do |base| %>
+    <tbody>
+      <tr>
+        <td>
+          <%= link_to "修正", edit_basis_path(base), class: "btn btn-sm btn-primary" %>
+        </td>
+        <td>
+          <%= link_to "削除", base, method: :delete, class: "btn btn-sm btn-primary",
+              data: { confirm:"削除してよろしいですか？" } %>
+        </td>
+        <td><%= base.base_number %></td>
+        <td><%= base.base_name %></td>
+        <td><%= base.base_kind %></td>
+      </tr>
+    </tbody>
+    <% end %>
+  </table>
+
+ <div id="new" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <button type="button" id="xxx" class="btn btn-primary btn-lg" data-toggle="collapse" data-target="#collapse">拠点情報追加</button>
+      </h4>
+    </div>
+    
+    <div id="collapse" class="panel-collapse collapse">
+      <div class="panel-body">
+        <%= form_with(model: @base, local: true) do |f| %>
+        <%= render 'shared/error_messages', object: @base %>
+          
+          <%= f.label :base_number, class: "label-#{yield(:class_text)}" %>
+          <%= f.number_field :base_number, class: "form-control" %>
+        
+          <%= f.label :base_name, class: "label-#{yield(:class_text)}" %>
+          <%= f.text_field :base_name, class: "form-control" %>
+        
+          <%= f.label :base_kind, class: "label-#{yield(:class_text)}" %>
+          <%= f.text_field :base_kind, class: "form-control", list: 'list-name' %>
+          <datalist id="list-name">
+            <option value="出勤">
+            <option value="退勤">
+          </datalist>
+          
+          <div id="add-info">
+          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

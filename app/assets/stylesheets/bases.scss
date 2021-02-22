@@ -1,3 +1,13 @@
-// Place all the styles related to the Bases controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+/* CSV　インポート機能 */
+#csv_import {
+  width: 280px;
+  margin: 10px 0px;
+}
+
+.label-base--edit {
+  margin-top: 5px;
+}
+
+.btn-base--edit {
+  margin-top: 10px;
+}
