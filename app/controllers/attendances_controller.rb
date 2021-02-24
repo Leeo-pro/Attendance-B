@@ -45,7 +45,13 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
 
-
+  def edit_over_work
+    @user = User.find(params[:user_id])
+    @attendance = @user.attendances.find(params[:id])   
+  end
+  
+  def update_over_work
+  end
 
 private
   # 1ヶ月分の勤怠情報を扱います。

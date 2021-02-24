@@ -19,7 +19,13 @@ Rails.application.routes.draw do
       post 'import'
       get 'index_attendance'
     end
-    resources :attendances, only: :update
+    resources :attendances, only: [:update] do
+      member do
+        get 'edit_over_work'
+        patch 'update_over_work'
+      end
+    end
+    
   end
   
   resources :bases do

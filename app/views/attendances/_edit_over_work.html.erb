@@ -1,0 +1,46 @@
+<% provide(:class_text, 'basic-info') %>
+<% provide(:button_text, '更新') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+      <h1 class="modal-title">【残業申請】</h1>
+    </div>
+    <div class="modal-body">
+      <div>
+        <table class="table table-bordered table-condensed table-hover" id="table-overwork">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>曜日</th>
+              <th>終了予定時間</th>
+              <th>翌日</th>
+              <th>業務処理内容</th>
+              <th>指示者確認㊞</th>
+            </tr>
+          </thead>
+          <tbody>
+          <%= form_with(model: @user, url: update_over_work_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
+            <%= render 'shared/error_messages', object: @user %>
+            <tr>
+              <td>8/1</td>
+              <td>月曜日</td>
+              <td>19：00</td>
+              <td>無し</td>
+              <td>業務支援のため</td>
+              <td></td>
+            </tr>
+            <div class="center">
+              <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
+            </div>
+
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
