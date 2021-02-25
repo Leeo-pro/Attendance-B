@@ -1,5 +1,5 @@
-<% provide(:class_text, 'basic-info') %>
-<% provide(:button_text, '更新') %>
+<% provide(:class_text, 'overwork') %>
+<% provide(:button_text, '変更を送信する') %>
 
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
@@ -26,21 +26,22 @@
           <%= form_with(model: @user, url: update_over_work_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
             <%= render 'shared/error_messages', object: @user %>
             <tr>
-              <td>8/1</td>
-              <td>月曜日</td>
-              <td>19：00</td>
-              <td>無し</td>
+              <td><%= l(@attendance.worked_on, format: :short) %></td>
+              <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
+              <td><%= f.time_select :basic_work_time %></td>
+              <td><%= f.check_box :basic_work_time %></td>
               <td>業務支援のため</td>
               <td></td>
             </tr>
+          </tbody>
+        </table>
+      </div>
             <div class="center">
               <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
             </div>
 
           <% end %>
-          </tbody>
-        </table>
-      </div>
+
     </div>
   </div>
 </div>
