@@ -28,10 +28,12 @@
             <tr>
               <td><%= l(@attendance.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
-              <td><%= f.time_select :basic_work_time %></td>
-              <td><%= f.check_box :basic_work_time %></td>
-              <td>業務支援のため</td>
-              <td></td>
+              <td><%= f.time_select :over_work_end_time %></td>
+              <td><%= f.check_box :overwork_next %></td>
+              <td><%= f.text_field :overwork %></td>
+              <td>
+                <%= f.collection_select :person, User.all, :id, :name, { include_blank: true} %>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -39,9 +41,7 @@
             <div class="center">
               <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
             </div>
-
           <% end %>
-
     </div>
   </div>
 </div>

@@ -51,13 +51,24 @@ class AttendancesController < ApplicationController
   end
   
   def update_over_work
+    if @attendance.update_attributes(overwork_params)
+      flash[:success] = "残業を申請いたしました。"
+    else
+      flash[:danger] = "残業申請は失敗しました。"
+    end
+    redirect_to @user
   end
 
 private
   # 1ヶ月分の勤怠情報を扱います。
   def attendances_params
-    params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :overwork, :person])[:attendances]
+    params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :overwork, :person, :over_work_end_time])[:attendances]
   end
+
+  def overwork_params
+    params.require(:user).permit(attendances: [:overwork, :overwork_next, :person, :over_work_end_time])[:attendances]
+  end
+
   
   # beforeフィルター
 

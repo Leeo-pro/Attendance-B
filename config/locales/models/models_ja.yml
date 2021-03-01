@@ -26,8 +26,9 @@ ja:
         finished_at: 退勤時間
         note: 備考
         user: ユーザーID
-        overwork: 残業指示
-        person: 指示者
+        overwork: 業務処理内容
+        person: 指示者確認
+        over_work_end_time: 終了予定時間
       base:
         base_number: 拠点番号
         base_name: 拠点名
