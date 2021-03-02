@@ -11,6 +11,8 @@
     </div>
     <div class="modal-body">
       <div>
+        <%= form_with(model: @user, url: update_over_work_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
+          <%= render 'shared/error_messages', object: @user %>
         <table class="table table-bordered table-condensed table-hover" id="table-overwork">
           <thead>
             <tr>
@@ -23,25 +25,23 @@
             </tr>
           </thead>
           <tbody>
-          <%= form_with(model: @user, url: update_over_work_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
-            <%= render 'shared/error_messages', object: @user %>
-            <tr>
-              <td><%= l(@attendance.worked_on, format: :short) %></td>
-              <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
-              <td><%= f.time_select :over_work_end_time %></td>
-              <td><%= f.check_box :overwork_next %></td>
-              <td><%= f.text_field :overwork %></td>
-              <td>
-                <%= f.collection_select :person, User.all, :id, :name, { include_blank: true} %>
-              </td>
-            </tr>
+            <%= f.fields_for :attendances do |attendance| %>
+              <tr>
+                <td><%= l(@attendance.worked_on, format: :short) %></td>
+                <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
+                <td><%= attendance.time_select :over_work_end_time %></td>
+                <td><%= attendance.check_box :overwork_next %></td>
+                <td><%= attendance.text_field :overwork %></td>
+                <td>
+                  <%= attendance.collection_select :person, User.all, :name, :name, { include_blank: true} %>
+                </td>
+              </tr>
+            <% end %>
           </tbody>
         </table>
+          <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
+         <% end %>
       </div>
-            <div class="center">
-              <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
-            </div>
-          <% end %>
     </div>
   </div>
 </div>

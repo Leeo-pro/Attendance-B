@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20210301025849) do
     t.string "overwork"
     t.string "person"
     t.datetime "over_work_end_time"
+    t.text "overwork_next"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -43,8 +44,8 @@ ActiveRecord::Schema.define(version: 20210301025849) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2021-02-15 23:00:00"
-    t.datetime "work_time", default: "2021-02-15 22:30:00"
+    t.datetime "basic_work_time", default: "2021-03-01 23:00:00"
+    t.datetime "work_time", default: "2021-03-01 22:30:00"
     t.integer "employee_number"
     t.string "uid"
     t.datetime "designated_work_start_time"
