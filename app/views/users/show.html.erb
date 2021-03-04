@@ -109,7 +109,7 @@ class: "btn btn-primary" %>
             <% end %>
           </td>
           <td><%= day.note %></td>
-          <td><%= day.over_work_end_time.hour if day.over_work_end_time.present? %></td>
+          <td><%= day.over_work_end_time.strftime('%H:%M') if day.over_work_end_time.present? %></td>
           <td><%= day.over_work_end_time.min if day.over_work_end_time.present? %></td>
           <td></td>
           <td><%= day.overwork %></td>

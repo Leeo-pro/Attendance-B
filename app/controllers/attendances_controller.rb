@@ -46,19 +46,23 @@ class AttendancesController < ApplicationController
   end
 
   def edit_over_work
-    @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
+    @user = User.find(@attendance.user_id)
   end
   
   def update_over_work
-    @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
-    if @attendance.update_attributes(overwork_params)
+    @user = User.find(@attendance.user_id)
+
+
+    if @attendance.update_attributes(overwork_params) && @attendance.person.present? && !(params[:over_work_end_time].nil?)
+
       flash[:success] = "残業申請を提出いたしました。"
     else
       flash[:danger] = "残業申請が正しくありません。"
     end
     redirect_to user_url(@user)
+    
   end
 
 private
@@ -68,7 +72,7 @@ private
   end
 
   def overwork_params
-    params.require(:user).permit(attendances: [:overwork, :overwork_next, :person, :over_work_end_time])[:attendances]
+    params.require(:attendance).permit(:overwork, :overwork_next, :person, :over_work_end_time)
   end
 
   

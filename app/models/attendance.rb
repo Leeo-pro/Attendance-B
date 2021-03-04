@@ -6,6 +6,9 @@ class Attendance < ApplicationRecord
   validates :note, length: { maximum: 50 }
   validates :overwork, length: { maximum: 50 }
   validates :person, length: { maximum: 50 }
+
+  validates :over_work_end_time, presence: true, on: [:update_over_work, :edit_over_work]
+  validates :person, presence: true, on: [:update_over_work, :edit_over_work]
   
   # 出勤時間が存在しない場合、退勤時間は無効
   validate :finished_at_is_invalid_without_a_started_at
@@ -29,4 +32,9 @@ class Attendance < ApplicationRecord
       errors.add(:started_at, "より早い退勤時間は無効です") if started_at > finished_at
     end
   end
+  
+  def test
+    
+  end
+  
 end
