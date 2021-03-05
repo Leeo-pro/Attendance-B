@@ -4,6 +4,7 @@ class AttendancesController < ApplicationController
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month
+  before_action :set_the_day, only: :update_over_work
   
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
@@ -53,16 +54,16 @@ class AttendancesController < ApplicationController
   def update_over_work
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
-
-
-    if @attendance.update_attributes(overwork_params) && @attendance.person.present? && !(params[:over_work_end_time].nil?)
-
+    if @attendance.update_attributes(overwork_params) && params[:attendance][:person].present? && params[:attendance][:over_work_end_time].present?
       flash[:success] = "残業申請を提出いたしました。"
+      redirect_to user_url(@user)
     else
-      flash[:danger] = "残業申請が正しくありません。"
+      flash.now[:danger] = "残業申請が正しくありません。"
+      respond_to do |format|
+        format.html { redirect_to user_url(@user) }
+        format.js { render partial: "edit_over_work", status: :unprocessable_entity }
+      end
     end
-    redirect_to user_url(@user)
-    
   end
 
 private
@@ -72,10 +73,9 @@ private
   end
 
   def overwork_params
-    params.require(:attendance).permit(:overwork, :overwork_next, :person, :over_work_end_time)
+    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time)
   end
 
-  
   # beforeフィルター
 
   # 管理権限者、または現在ログインしているユーザーを許可します。
@@ -85,5 +85,12 @@ private
       flash[:danger] = "編集権限がありません。"
       redirect_to(root_url)
     end
+  end
+
+  def set_the_day
+    year = @attendance.worked_on.year
+    month = self.worked_on.month
+    day = self.worked_on.day
+    self.over_work_end_time = self.over_work_end_time.change(year: year, month: month, day: day)
   end
 end
