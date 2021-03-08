@@ -3,9 +3,7 @@ class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_one_month, only: :edit_one_month
   before_action :set_the_day, only: :update_over_work
-  
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   
@@ -54,16 +52,33 @@ class AttendancesController < ApplicationController
   def update_over_work
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
-    if @attendance.update_attributes(overwork_params) && params[:attendance][:person].present? && params[:attendance][:over_work_end_time].present?
-      flash[:success] = "残業申請を提出いたしました。"
+  
+    unless params[:attendance]['over_work_end_time(4i)'] == "" && params[:attendance]['over_work_end_time(5i)'] == ""
+      if params[:attendance][:overwork_next] = 1
+        year = (@attendance.worked_on + 1).year
+        month = (@attendance.worked_on + 1).month
+        day = (@attendance.worked_on + 1).day 
+      else
+        year = @attendance.worked_on.year
+        month = @attendance.worked_on.month
+        day = @attendance.worked_on.day
+      end
+      hour = params[:attendance]['over_work_end_time(4i)']
+      min = params[:attendance]['over_work_end_time(5i)']
+      params[:attendance][:over_work_end_time] = Time.new(year, month, day, hour, min, 0,).to_time.to_s
+    end
+
+    params[:attendance][:superior_status] = "申請中" if params[:attendance][:person].present?
+    
+    if params[:attendance][:person].present? && params[:attendance][:over_work_end_time].present?
+      @attendance.update_attributes(overwork_params)
+      flash[:success] = "申請が完了しました。"
       redirect_to user_url(@user)
     else
-      flash.now[:danger] = "残業申請が正しくありません。"
-      respond_to do |format|
-        format.html { redirect_to user_url(@user) }
-        format.js { render partial: "edit_over_work", status: :unprocessable_entity }
-      end
+      flash[:danger] = "残業申請が正しくありません。"
+      redirect_to user_url(@user)
     end
+    
   end
 
 private
@@ -73,7 +88,7 @@ private
   end
 
   def overwork_params
-    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time)
+    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time, :superior_status)
   end
 
   # beforeフィルター
@@ -88,9 +103,10 @@ private
   end
 
   def set_the_day
+@attendance = Attendance.find(params[:id])
     year = @attendance.worked_on.year
-    month = self.worked_on.month
-    day = self.worked_on.day
-    self.over_work_end_time = self.over_work_end_time.change(year: year, month: month, day: day)
+    month = @attendance.worked_on.month
+    day = @attendance.worked_on.day
+    @attendance.over_work_end_time = Time.new(2021, 3, 1, 10, 11, 12, '+01:00').to_time.to_s
   end
 end

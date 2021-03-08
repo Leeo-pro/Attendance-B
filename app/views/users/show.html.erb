@@ -23,6 +23,12 @@
       <td>月末日：<%= l(@last_day, format: :short) %></td>
     </tr>
   </table>
+  <% if @user.admin? || @user.superior? %>
+    <%= "【所属長承認申請のお知らせ】" %><br>
+    <%= "【勤怠変更申請のお知らせ】" %><br>
+    <%= "【残業申請のお知らせ】" %><br>
+  <% end %>
+  
 <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day),
 class: "btn btn-primary" %>
 <%= link_to "CSV出力", "*",
@@ -31,9 +37,6 @@ class: "btn btn-primary" %>
 <%= link_to "勤怠修正ログ（承認済）", "*",
 class: "btn btn-primary" %>
 </div>
-
-
-
 
 
 <div>
@@ -109,11 +112,11 @@ class: "btn btn-primary" %>
             <% end %>
           </td>
           <td><%= day.note %></td>
-          <td><%= day.over_work_end_time.hour if day.over_work_end_time.present? %></td>
-          <td><%= day.over_work_end_time.min if day.over_work_end_time.present? %></td>
+          <td><%= day.over_work_end_time.hour if !(day.over_work_end_time.nil?) %></td>
+          <td><%= day.over_work_end_time.min if !(day.over_work_end_time.nil?) %></td>
           <td></td>
           <td><%= day.overwork %></td>
-          <td><%= day.person if day.person.present? %></td>
+          <td><%= day.superior_status %></td>
         </tr>
       <% end %>
     </tbody>
