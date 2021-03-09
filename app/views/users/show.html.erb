@@ -24,9 +24,18 @@
     </tr>
   </table>
   <% if @user.admin? || @user.superior? %>
-    <%= "【所属長承認申請のお知らせ】" %><br>
-    <%= "【勤怠変更申請のお知らせ】" %><br>
-    <%= "【残業申請のお知らせ】" %><br>
+    <% cnt1 = Attendance.where(superior_status: "申請中", person: @user.name).count %>
+      <%= "【所属長承認申請のお知らせ】" %><br>
+      <%= "【勤怠変更申請のお知らせ】" %><br>
+      <% if cnt1 > 0 %> 
+        <%= link_to "【残業申請のお知らせ】" , basis_path, class: "navi-link"  %>
+          <div style="display:inline-block; border: 3px solid #f30; color: #f30;">
+            <%= cnt1 %>件の通知があります
+          </div><br>
+      <% else %>
+        "【残業申請のお知らせ】" %><br>
+      <% end %>
+
   <% end %>
   
 <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day),
