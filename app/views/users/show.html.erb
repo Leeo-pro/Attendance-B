@@ -28,12 +28,12 @@
       <%= "【所属長承認申請のお知らせ】" %><br>
       <%= "【勤怠変更申請のお知らせ】" %><br>
       <% if cnt1 > 0 %> 
-        <%= link_to "【残業申請のお知らせ】" , basis_path, class: "navi-link"  %>
+        <%= link_to "【残業申請のお知らせ】" , attendances_edit_over_work_day_approval_user_path(@user), remote: true, class: "navi-link"  %>
           <div style="display:inline-block; border: 3px solid #f30; color: #f30;">
-            <%= cnt1 %>件の通知があります
+            <%= link_to "#{cnt1}件の通知があります", attendances_edit_over_work_day_approval_user_path(@user), remote: true, class: "navi-link2" %>
           </div><br>
       <% else %>
-        "【残業申請のお知らせ】" %><br>
+        <%= "【残業申請のお知らせ】" %><br>
       <% end %>
 
   <% end %>
@@ -132,13 +132,13 @@ class: "btn btn-primary" %>
     <tfoot>
       <!--rowspan:縦結合、colspan:横結合-->
       <tr>
-        <td colspan="2">累計日数</td>
-        <td colspan="2">総合勤務時間</td>
-        <td colspan="2">累計在社時間</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
         <td colspan="1"></td>
         <td colspan="1"></td>
         <td colspan="1"></td>
-        <td colspan="1"></td>
+        <td colspan="1">所属長承認　未</td>
 
       </tr>
       <tr>
@@ -157,3 +157,4 @@ class: "btn btn-primary" %>
 <!--モーダルウインドウ表示-->
 <div id="edit-over-work" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
+<div id="edit-over-work-day-approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

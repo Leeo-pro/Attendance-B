@@ -1,9 +1,8 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
-  before_action :set_user, only: [:edit_one_month, :update_one_month]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_over_work_day_approval, :update_over_work_day_approval]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_the_day, only: :update_over_work
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   
@@ -78,8 +77,17 @@ class AttendancesController < ApplicationController
       flash[:danger] = "残業申請が正しくありません。"
       redirect_to user_url(@user)
     end
-    
   end
+
+  def edit_over_work_day_approval
+    @notice_users =  User.where(id: Attendance.where(person: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(name: @user.name)
+  end
+
+  def update_over_work_day_approval
+    @attendances = Attendance.where(superior_status: "申請中", person: @user.name)
+    
+  end  
 
 private
   # 1ヶ月分の勤怠情報を扱います。
@@ -100,13 +108,5 @@ private
       flash[:danger] = "編集権限がありません。"
       redirect_to(root_url)
     end
-  end
-
-  def set_the_day
-@attendance = Attendance.find(params[:id])
-    year = @attendance.worked_on.year
-    month = @attendance.worked_on.month
-    day = @attendance.worked_on.day
-    @attendance.over_work_end_time = Time.new(2021, 3, 1, 10, 11, 12, '+01:00').to_time.to_s
   end
 end
