@@ -5,44 +5,75 @@
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-
-<% @attendance_liss.each |attendance| do %>
-        
         <span aria-hidden="true">×</span>
       </button>
-      <h1 class="modal-title">【 <%= user %>からの残業申請】</h1>
+      <% @notice_users.each do |user| %>
+      
     </div>
     <div class="modal-body">
+ 
       <div>
-        <%= form_with(model: @attendance, url: attendances_update_over_work_day_approval_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
-          <%= render 'shared/error_messages', object: @attendance %>
         <table class="table table-bordered table-condensed table-hover" id="table-overwork">
+  <h1 class="modal-title">【 <%= user.name %>からの残業申請】</h1>
+        
+ 
+  
           <thead>
             <tr>
               <th>日付</th>
               <th>曜日</th>
               <th>終了予定時間</th>
-              <th>翌日</th>
+              <th>指示勤務終了時間</th>
+              <th>時間外時間</th>
               <th>業務処理内容</th>
               <th>指示者確認㊞</th>
+              <th>変更</th>
+              <th>勤怠を確認する</th>
             </tr>
           </thead>
+            <% @attendance_lists.where(user_id: user.id).each do |attendance| %>
+
           <tbody>
               <tr>
-                <td><%= l(@attendance.worked_on, format: :short) %></td>
-                <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
-                <td><%= f.time_select :over_work_end_time, include_blank: true, ignore_data: true %></td>
-                <td><%= f.check_box :overwork_next %></td>
-                <td><%= f.text_field :overwork %></td>
+                <td><%= l(attendance.worked_on, format: :short) %></td>
+                <td><%= $days_of_the_week[attendance.worked_on.wday] %></td>
+                <td><%= l(attendance.over_work_end_time, format: :time) %></td>
+                <td><%= l(user.designated_work_end_time, format: :time) %></td>
                 <td>
-                  <%= f.collection_select :person, User.all, :name, :name, { include_blank: true} %>
+                  <% if attendance.overwork_next == '1' %>
+                    <% year = (attendance.worked_on + 1).year %>
+                    <% month = (attendance.worked_on + 1).month %>
+                    <% day = (attendance.worked_on + 1).day %>
+                  <% else %>
+                    <% year = (attendance.worked_on).year %>
+                    <% month = (attendance.worked_on).month %>
+                    <% day = (attendance.worked_on).day %>  
+                  <% end %>              
+                    <% hour = attendance.over_work_end_time.hour %>
+                    <% min = attendance.over_work_end_time.min %>
+                    <% attendance.over_work_end_time = Time.new(year, month, day, hour, min, 0,).to_time.to_s %>
+                  　
+                  　<% hour1 = user.designated_work_end_time.hour %>
+                    <% min1 = user.designated_work_end_time.min %>
+                    <% user.designated_work_end_time = Time.new(year, month, day, hour1, min1, 0,).to_time.to_s %>
+                  　
+                  　<% t2 = (attendance.over_work_end_time - user.designated_work_end_time).to_i %>
+<%= Time.t2.utc.strftime('%X') %>
                 </td>
+                <td><%= attendance.overwork %></td>
+                <td>
+                  <%= "申請中" %>
+                </td>
+                <td><%= "チェック" %></td>
+                <td><%= link_to "確認", "#", class: "btn btn-primary" %></td>
               </tr>
           </tbody>
-        </table>
-          <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
-         <% end %>
 <% end %>
+<% end %>
+        </table>
+ 
+          <%= "hhh" %>
+
       </div>
     </div>
   </div>

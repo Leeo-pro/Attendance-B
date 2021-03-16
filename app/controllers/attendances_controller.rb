@@ -73,6 +73,7 @@ class AttendancesController < ApplicationController
       @attendance.update_attributes(overwork_params)
       flash[:success] = "申請が完了しました。"
       redirect_to user_url(@user)
+      
     else
       flash[:danger] = "残業申請が正しくありません。"
       redirect_to user_url(@user)
@@ -81,7 +82,7 @@ class AttendancesController < ApplicationController
 
   def edit_over_work_day_approval
     @notice_users =  User.where(id: Attendance.where(person: @user.name).select(:user_id))
-    @attendance_lists = Attendance.where(name: @user.name)
+    @attendance_lists = Attendance.where(superior_status: "申請中",person: @user.name)
   end
 
   def update_over_work_day_approval
