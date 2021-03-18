@@ -49,6 +49,7 @@ class AttendancesController < ApplicationController
   end
   
   def update_over_work
+    
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
   
@@ -83,11 +84,16 @@ class AttendancesController < ApplicationController
   def edit_over_work_day_approval
     @notice_users =  User.where(id: Attendance.where(person: @user.name).select(:user_id))
     @attendance_lists = Attendance.where(superior_status: "申請中",person: @user.name)
+    @attendance = Attendance.find(params[:id]) 
   end
 
   def update_over_work_day_approval
     @attendances = Attendance.where(superior_status: "申請中", person: @user.name)
-    
+    if params[:change_status] == "true"
+      
+    else
+      flash[:danger] = "チェックボックスをオンにしてください。"
+    end
   end  
 
 private
