@@ -2,6 +2,8 @@ class Attendance < ApplicationRecord
   belongs_to :user
   require 'csv'
   
+  attr_accessor :change
+  
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
   validates :overwork, length: { maximum: 50 }

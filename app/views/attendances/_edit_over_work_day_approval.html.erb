@@ -7,10 +7,10 @@
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
       </button>
+    </div>
         <%= form_with(model: @attendance, url: attendances_update_over_work_day_approval_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
           <%= render 'shared/error_messages', object: @attendance %>
       <% @notice_users.each do |user| %>
-    </div>
     <div class="modal-body">
       <div>
         <table class="table table-bordered table-condensed table-hover" id="table-overwork-day">
@@ -57,7 +57,7 @@
                   <%= f.select :superior_status, [['なし', 1], ['申請中', 2], ['承認', 3], ['否認', 4]], { include_blank: attendance.superior_status } %>
                   
                 </td>
-                <td><%= f.check_box :change_status, {}, "true", "false" %></td>
+                <td><%= f.check_box :change, {}, "true", "false" %></td>
                 <td><%= link_to "確認", "#", class: "btn btn-primary" %></td>
               </tr>
             </tbody>
@@ -68,7 +68,6 @@
           <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
           </div>
       <% end %>
-
       </div>
     </div>
   </div>

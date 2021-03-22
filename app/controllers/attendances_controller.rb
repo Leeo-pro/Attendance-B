@@ -88,12 +88,17 @@ class AttendancesController < ApplicationController
   end
 
   def update_over_work_day_approval
+    @attendance = Attendance.find(params[:id]) 
     @attendances = Attendance.where(superior_status: "申請中", person: @user.name)
-    if params[:change_status] == "true"
-      
+
+    if params[:change] == "true"
+      @attendance.update_attributes(overwork_params)
+      flash[:success] = "残業申請のお知らせを変更しました"
     else
       flash[:danger] = "チェックボックスをオンにしてください。"
     end
+    
+redirect_to(root_url)
   end  
 
 private
@@ -103,7 +108,7 @@ private
   end
 
   def overwork_params
-    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time, :superior_status)
+    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time, :superior_status, :change_status)
   end
 
   # beforeフィルター
