@@ -3,7 +3,8 @@ class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_over_work_day_approval, :update_over_work_day_approval]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-
+  before_action :set_one_month, only: :edit_one_month
+  attr_accessor :collection
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   
   def update
@@ -49,7 +50,6 @@ class AttendancesController < ApplicationController
   end
   
   def update_over_work
-    
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
   
@@ -82,24 +82,24 @@ class AttendancesController < ApplicationController
   end
 
   def edit_over_work_day_approval
-    @notice_users =  User.where(id: Attendance.where(person: @user.name).select(:user_id))
-    @attendance_lists = Attendance.where(superior_status: "申請中",person: @user.name)
+    @notice_users =  User.where(id: Attendance.where(superior_status: "申請中", person: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(superior_status: "申請中", person: @user.name)
     @attendance = Attendance.find(params[:id]) 
   end
-
+  
   def update_over_work_day_approval
-    @attendance = Attendance.find(params[:id]) 
-    @attendances = Attendance.where(superior_status: "申請中", person: @user.name)
-
-    if params[:change] == "true"
-      @attendance.update_attributes(overwork_params)
-      flash[:success] = "残業申請のお知らせを変更しました"
-    else
-      flash[:danger] = "チェックボックスをオンにしてください。"
-    end
-    
-redirect_to(root_url)
-  end  
+          reply_overtime_params.each do |id, item|
+          attendance = Attendance.find(id)
+          
+           if attendance.change_status = "true"
+              
+              attendance.update_attributes!(item)
+           end
+          end
+      redirect_to(root_url)
+        
+  
+  end 
 
 private
   # 1ヶ月分の勤怠情報を扱います。
@@ -109,6 +109,10 @@ private
 
   def overwork_params
     params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time, :superior_status, :change_status)
+  end
+
+  def reply_overtime_params
+    params.require(:attendance).permit(attendances: [:superior_status, :change_status])[:attendances]
   end
 
   # beforeフィルター
