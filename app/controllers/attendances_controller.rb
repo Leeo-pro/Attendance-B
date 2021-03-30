@@ -69,6 +69,7 @@ class AttendancesController < ApplicationController
     end
 
     params[:attendance][:superior_status] = "申請中" if params[:attendance][:person].present?
+    params[:attendance][:change_status] = "false"
     
     if params[:attendance][:person].present? && params[:attendance][:over_work_end_time].present?
       @attendance.update_attributes(overwork_params)
@@ -88,17 +89,21 @@ class AttendancesController < ApplicationController
   end
   
   def update_over_work_day_approval
-          reply_overtime_params.each do |id, item|
+          params[:attendance][:attendances].each do |id, item|
+            
           attendance = Attendance.find(id)
           
-           if attendance.change_status = "true"
-              
-              attendance.update_attributes!(item)
+           if item[:change_status] == "true"
+             
+              attendance.change_status = item[:change_status]
+              attendance.superior_status = item[:superior_status]
+              attendance.save
+              flash[:success] = "OK"
+           else
+              flash[:danger] = "NG"
            end
           end
       redirect_to(root_url)
-        
-  
   end 
 
 private

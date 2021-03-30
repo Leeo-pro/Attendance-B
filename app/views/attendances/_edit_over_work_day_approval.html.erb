@@ -57,7 +57,7 @@
                   <td>
                     <%= list.select :superior_status, [['なし'], ['申請中'], ['承認'], ['否認']], { include_blank: attendance.superior_status } %>
                   </td>
-                  <td><%= list.check_box :change_status, {}, "true", "false" %></td>
+                  <td><%= list.check_box :change_status, {checked: "false"}, "true", "false" %></td>
                   <td><%= link_to "確認", "#", class: "btn btn-primary" %></td>
                 </tr>
               </tbody>
