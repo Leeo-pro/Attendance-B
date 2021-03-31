@@ -89,21 +89,17 @@ class AttendancesController < ApplicationController
   end
   
   def update_over_work_day_approval
-          params[:attendance][:attendances].each do |id, item|
-            
-          attendance = Attendance.find(id)
-          
-           if item[:change_status] == "true"
-             
-              attendance.change_status = item[:change_status]
-              attendance.superior_status = item[:superior_status]
-              attendance.save
-              flash[:success] = "OK"
-           else
-              flash[:danger] = "NG"
-           end
-          end
-      redirect_to(root_url)
+    params[:attendance][:attendances].each do |id, item|
+      attendance = Attendance.find(id)
+      if item[:change_status] == "true"
+         
+        attendance.change_status = item[:change_status]
+        attendance.superior_status = item[:superior_status]
+        attendance.save
+      end
+    end
+    flash[:success] = "承認申請が完了しました"
+    redirect_to user_url(@user, order_sort: 1)
   end 
 
 private

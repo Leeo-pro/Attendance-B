@@ -42,7 +42,7 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
-      redirect_to @user
+      redirect_to @user, order_sort: 1
     else
       @users = User.paginate(page: params[:page], per_page: 20)
       render :edit
