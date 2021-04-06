@@ -19,6 +19,10 @@ gem 'roo'
 gem 'activerecord-import'
 
 group :development, :test do
+  gem 'pry-rails'
+  gem 'pry-doc'
+  gem 'pry-byebug'
+  
   gem 'sqlite3'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end

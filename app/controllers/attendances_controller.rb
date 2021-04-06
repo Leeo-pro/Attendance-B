@@ -1,6 +1,6 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_over_work_day_approval, :update_over_work_day_approval]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_over_work_day_approval, :update_over_work_day_approval, :edit_one_month_approval, :update_one_month_approval, :edit_one_month_admit, :update_one_month_admit]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month
@@ -54,7 +54,7 @@ class AttendancesController < ApplicationController
     @user = User.find(@attendance.user_id)
   
     unless params[:attendance]['over_work_end_time(4i)'] == "" && params[:attendance]['over_work_end_time(5i)'] == ""
-      if params[:attendance][:overwork_next] = 1
+      if params[:attendance][:overwork_next] == "true"
         year = (@attendance.worked_on + 1).year
         month = (@attendance.worked_on + 1).month
         day = (@attendance.worked_on + 1).day 
@@ -101,6 +101,40 @@ class AttendancesController < ApplicationController
     flash[:success] = "承認申請が完了しました"
     redirect_to user_url(@user, order_sort: 1)
   end 
+
+  def edit_one_month_approval
+  end
+  
+  def update_one_month_approval
+     @user = User.find(params[:id])
+     @attendance = Attendance.find_by(user_id: params[:id], worked_on: params[:apply_month])
+     @attendance.person2 = params[:person2]
+     @attendance.apply_month = params[:apply_month]
+     @attendance.save
+
+     flash[:success] = "承認申請が完了しました"
+     redirect_to user_url(@user, order_sort: 1)
+  end
+
+  def edit_one_month_admit
+    @notice_users =  User.where(id: Attendance.where(superior_status2: nil, person2: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(superior_status2: nil, person2: @user.name)
+    @attendance = Attendance.find(params[:id]) 
+  end
+  
+  def update_one_month_admit
+    params[:attendance][:attendances].each do |id, item|
+      attendance = Attendance.find(id)
+      if item[:change_status2] == "true"
+         
+        attendance.change_status2 = item[:change_status2]
+        attendance.superior_status2 = item[:superior_status2]
+        attendance.save
+      end    
+    end
+    flash[:success] = "承認申請が完了しました"
+    redirect_to user_url(@user, order_sort: 1)
+  end
 
 private
   # 1ヶ月分の勤怠情報を扱います。

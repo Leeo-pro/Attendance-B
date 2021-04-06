@@ -1,4 +1,6 @@
 <% provide(:title, @user.name) %>
+<% provide(:class_text, 'one_month_approval') %>
+<% provide(:button_text, '申請') %>
 <div>
   <% num = params[:order_sort] %>
   <table class="table table-bordered table-condensed user-table">
@@ -29,11 +31,24 @@
     </tr>
   </table>
   <% case num %>
-  <% when "1" %>
+  <% when "2" %>
+  
+  <% else %>
     <% if @user.admin? || @user.superior? %>
       <% cnt1 = Attendance.where(superior_status: "申請中", person: @user.name).count %>
-        <%= "【所属長承認申請のお知らせ】" %><br>
+      <% cnt2 = Attendance.where(person2: @user.name).count %>
+
+        <% if cnt2 > 0 %> 
+          <%= link_to "【所属長承認申請のお知らせ】" , attendances_edit_one_month_admit_user_path(@user), remote: true, class: "navi-link"  %>
+            <div style="display:inline-block; border: 3px solid #f30; color: #f30;">
+          <%= link_to "#{cnt2}件の通知があります", attendances_edit_one_month_admit_user_path(@user), remote: true, class: "navi-link2" %>
+            </div><br>
+        <% else %>
+          <%= "【所属長承認申請のお知らせ】" %><br>
+        <% end %>
+
         <%= "【勤怠変更申請のお知らせ】" %><br>
+
         <% if cnt1 > 0 %> 
           <%= link_to "【残業申請のお知らせ】" , attendances_edit_over_work_day_approval_user_path(@user), remote: true, class: "navi-link"  %>
             <div style="display:inline-block; border: 3px solid #f30; color: #f30;">
@@ -51,8 +66,6 @@
     <%= link_to "勤怠修正ログ（承認済）", "*",
     class: "btn btn-primary" %>
 
- <% when "2" %>
- <% else %>
  <% end %>
 </div>
 
@@ -60,7 +73,9 @@
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
     <thead>
       <tr>
-        <% if num == "1" %>
+        <% case num %>
+        <% when "2" %>
+        <% else %>
           <th rowspan="3">残業申請</th>
         <% end %>
         <th rowspan="3">日付</th>
@@ -95,7 +110,9 @@
     <tbody>
       <% @attendances.each do |day| %>
         <tr>
-        <% if num == "1" %>
+        <% case num %>
+        <% when "2" %>
+        <% else %>
           <td>
             <%= link_to "残業申請", edit_over_work_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %>
         <% end %>
@@ -144,23 +161,24 @@
     <tfoot>
       <!--rowspan:縦結合、colspan:横結合-->
       <tr>
+        <td colspan="1"></td>
         <td colspan="2"></td>
-        <td colspan="2"></td>
-        <td colspan="2"></td>
-        <td colspan="1"></td>
-        <td colspan="1"></td>
-        <td colspan="1"></td>
-        <td colspan="1">所属長承認　未</td>
-
-      </tr>
-      <tr>
-        <td colspan="2"><%= @attendances.count%></td>
-        <td colspan="2"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
-        <td colspan="2"><%= format("%.2f", @total_working_times.to_f) %></td>
-        <td colspan="1"></td>
-        <td colspan="1"></td>
-        <td colspan="1"></td>
-        <td colspan="1"></td>
+        <td colspan="6"></td>
+        <td colspan="1"><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="5"></td>
+        <% case num %>
+        <% when "2" %>
+        <% else %>
+        <td colspan="1">
+          <% status = Attendance.find_by(worked_on: @first_day, user_id: @user.id).superior_status2 %>
+          <%= form_with(model: @attendance, url: attendances_update_one_month_approval_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
+            <%= "所属長承認　#{status}" %><br>
+            <%= f.hidden_field :apply_month, :value => @first_day %>
+            <%= f.collection_select :person2, User.all, :name, :name, { include_blank: true} %>
+            <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
+          <% end %>
+        </td>
+        <% end %>
       </tr>
     </tfoot>
   </table>
@@ -170,3 +188,5 @@
 <div id="edit-over-work" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 <div id="edit-over-work-day-approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<div id="edit-one-month-admit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

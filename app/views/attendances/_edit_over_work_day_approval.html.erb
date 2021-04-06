@@ -1,6 +1,6 @@
 <% provide(:class_text, 'overwork-day') %>
 <% provide(:button_text, '変更を送信する') %>
-
+<% require "date"%>
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
     <div class="modal-header">
@@ -29,6 +29,10 @@
               </tr>
              </thead>
               <% @attendance_lists.where(user_id: user.id).each do |attendance| %>
+                   <% hour2 = attendance.over_work_end_time.hour %>
+                   <% min2 = attendance.over_work_end_time.min %>
+                　 <% hour1 = user.designated_work_end_time.hour %>
+                   <% min1 = user.designated_work_end_time.min %>
                 <%= f.fields_for 'attendances[]', attendance do |list| %>
                  <% if attendance.overwork_next == '1' %>
                    <% year = (attendance.worked_on + 1).year %>
@@ -38,12 +42,8 @@
                    <% year = (attendance.worked_on).year %>
                    <% month = (attendance.worked_on).month %>
                    <% day = (attendance.worked_on).day %>  
-                 <% end %>              
-                   <% hour = attendance.over_work_end_time.hour %>
-                   <% min = attendance.over_work_end_time.min %>
-                     <% attendance.over_work_end_time = Time.new(year, month, day, hour, min, 0,).to_time.to_s %>
-                　 <% hour1 = user.designated_work_end_time.hour %>
-                   <% min1 = user.designated_work_end_time.min %>
+                 <% end %>     
+                     <% attendance.over_work_end_time = Time.new(year, month, day, hour2, min2, 0,).to_time.to_s %>
                      <% user.designated_work_end_time = Time.new(year, month, day, hour1, min1, 0,).to_time.to_s %>
                 　 <% t2 = attendance.over_work_end_time - user.designated_work_end_time %>
               <tbody>

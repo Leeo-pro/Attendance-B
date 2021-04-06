@@ -16,6 +16,11 @@ Rails.application.routes.draw do
       get 'edit_basic_all'
       get 'attendances/edit_over_work_day_approval'
       patch 'attendances/update_over_work_day_approval'
+      get 'attendances/edit_one_month_approval'
+      patch 'attendances/update_one_month_approval'
+      get 'attendances/edit_one_month_admit'
+      patch 'attendances/update_one_month_admit'
+
     end
     collection do
       post 'import'
