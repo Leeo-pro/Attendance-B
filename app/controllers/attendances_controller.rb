@@ -1,6 +1,10 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_over_work_day_approval, :update_over_work_day_approval, :edit_one_month_approval, :update_one_month_approval, :edit_one_month_admit, :update_one_month_admit]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_over_work_day_approval, :update_over_work_day_approval,
+                                  :edit_one_month_approval, :update_one_month_approval, 
+                                  :edit_one_month_admit, :update_one_month_admit,
+                                  :edit_work_record_admit, :update_work_record_admit,
+                                  ]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month
@@ -34,6 +38,21 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
         attendances_params.each do |id, item|
           attendance = Attendance.find(id)
+          
+          if attendance.before_started_at.nil? && attendance.started_at.nil?
+            attendance.restarted_at = item[:started_at]
+          elsif attendance.before_started_at.nil? && attendance.started_at.present?
+            attendance.before_started_at = attendance.started_at
+          elsif attendance.before_started_at.present? && attendance.started_at.present?
+            attendance.before_started_at = attendance.started_at
+          end
+          if attendance.before_finished_at.nil? && attendance.finished_at.nil?
+            attendance.refinished_at = item[:finished_at]
+          elsif attendance.before_finished_at.nil? && attendance.finished_at.present?
+            attendance.before_finished_at = attendance.finished_at
+          elsif attendance.before_finished_at.present? && attendance.finished_at.present?
+            attendance.before_finished_at = attendance.finished_at
+          end
           attendance.update_attributes!(item)
         end
         flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
@@ -135,11 +154,43 @@ class AttendancesController < ApplicationController
     flash[:success] = "承認申請が完了しました"
     redirect_to user_url(@user, order_sort: 1)
   end
+  
+  def edit_work_record_admit
+    @notice_users =  User.where(id: Attendance.where(superior_status: nil, person3: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(superior_status: nil, person3: @user.name)
+    @attendance = Attendance.find(params[:id]) 
+    
+    if params[:started_at].present?
+      @attendance.restarted_at = params[:started_at]
+    end
+    if params[:finished_at].present?
+      @attendance.refinished_at = params[:finished_at]
+    end
+    @attendance.save
+  end
+  
+  def update_work_record_admit
+    params[:attendance][:attendances].each do |id, item|
+      attendance = Attendance.find(id)
+      if item[:change_status] == "true"
+        attendance.approval_day = Date.current
+        attendance.change_status = item[:change_status]
+        attendance.superior_status = "勤怠編集#{item[:superior_status]}"
+        attendance.save
+      end    
+    end
+    flash[:success] = "承認申請が完了しました"
+    redirect_to user_url(@user, order_sort: 1)
+  end
+
+  def approval_record
+    
+  end
 
 private
   # 1ヶ月分の勤怠情報を扱います。
   def attendances_params
-    params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :overwork, :person, :over_work_end_time])[:attendances]
+    params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :overwork, :person, :over_work_end_time, :person3, :before_started_at, :before_finished_at, :restarted_at, :refinished_at, :approval_day])[:attendances]
   end
 
   def overwork_params

@@ -28,8 +28,23 @@ ja:
         user: ユーザーID
         overwork: 業務処理内容
         person: 指示者確認
+        person2: 指示者確認
+        person3: 指示者確認
         over_work_end_time: 終了予定時間
         superior_status: 指示確認㊞
+        superior_status2: 指示確認㊞
+        change_status: 変更チェック
+        change_status2: 変更チェック
+        over_work_end_time: 残業予定時間
+        overwork_next: 翌日残業
+        apply_month: 月間申請
+        started_at: 変更出勤時間
+        finished_at: 変更退勤時間
+        restarted_at: 変更初期出勤時間
+        refinished_at: 変更初期退勤時間
+        before_started_at: 変更直前出勤時間
+        before_finished_at: 変更直前退勤時間
+        approval_day: 承認日
       base:
         base_number: 拠点番号
         base_name: 拠点名

@@ -1,0 +1,46 @@
+<% provide(:title, 'Apporoval List') %>
+
+<h1>勤怠ログ</h1>
+
+<div class="row container">
+  <div class="col-md-10 col-md-offset-8">
+    <%= form_with(url: attendances_approval_record_user_path, method: :get, local:true) do |f| %>
+      <%= f.submit "リセット" %><br>
+      <%= f.select :year, [Date.today.year, Date.today.prev_year.year], { include_blank: '年' } %>
+      <%= f.label params[:format].year %><br>
+      <%= f.select :month, 1..12, { include_blank: '月' } %>
+    <% end %>
+  </div>
+</div>
+
+<div>
+  <table class="table table-bordered table-condensed table-hover text-center table-striped" id="index_attendance">
+    <thead>
+      <tr>
+        <td>日付</td>
+        <td>変更前出社時間</td>      
+        <td>変更前退社時間</td>
+        <td>変更後出社</td>      
+        <td>変更後退社</td>
+        <td>指示者</td>      
+        <td>承認日</td>      
+      </tr>
+    </thead>
+
+      <% attendances = Attendance.where(worked_on: params[:format].in_time_zone.all_month, user_id: params[:id], superior_status: "勤怠編集承認") %>
+
+    <tbody>
+      <% attendances.each do |attendance| %>
+        <tr>
+          <td><%= l(attendance.worked_on, format: :default) %></td>
+          <td><%= l(attendance.restarted_at, format: :time) if attendance.restarted_at.present? %></td>      
+          <td><%= l(attendance.refinished_at, format: :time) if attendance.refinished_at.present? %></td>
+          <td><%= l(attendance.started_at, format: :time) if attendance.started_at.present? %></td>
+          <td><%= l(attendance.finished_at, format: :time) if attendance.finished_at.present? %></td>
+          <td><%= attendance.person3 %></td>
+          <td><%= l(attendance.approval_day, format: :default) if attendance.approval_day.present? %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

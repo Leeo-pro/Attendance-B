@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       patch 'attendances/update_one_month_approval'
       get 'attendances/edit_one_month_admit'
       patch 'attendances/update_one_month_admit'
+      get 'attendances/edit_work_record_admit'
+      patch 'attendances/update_work_record_admit'
+      get 'attendances/approval_record'
 
     end
     collection do
