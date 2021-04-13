@@ -68,7 +68,7 @@
     <% end %>
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day),
     class: "btn btn-primary" %>
-    <%= link_to "CSV出力", "*",
+    <%= link_to "CSV出力", attendances_output_user_path(format: :csv),
     class: "btn btn-primary" %>
     <br>
     <%= link_to "勤怠修正ログ（承認済）", attendances_approval_record_user_path(@user, @first_day),
@@ -181,7 +181,7 @@
           <%= form_with(model: @attendance, url: attendances_update_one_month_approval_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
             <%= "所属長承認　#{status}" %><br>
             <%= f.hidden_field :apply_month, :value => @first_day %>
-            <%= f.collection_select :person2, User.all, :name, :name, { include_blank: true} %>
+            <%= f.collection_select :person2, User.where(superior: true), :name, :name, { include_blank: true} %>
             <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
           <% end %>
         </td>

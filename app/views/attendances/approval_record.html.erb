@@ -1,14 +1,21 @@
 <% provide(:title, 'Apporoval List') %>
 
 <h1>勤怠ログ</h1>
-
 <div class="row container">
-  <div class="col-md-10 col-md-offset-8">
+  <div class="col-md-10">
+    
+    <% if params[:format].present? %>
+      <% fix_date = params[:format].to_date %>
+    <% else %>
+      <% fix_date = Date.new(params[:year].to_i, params[:month].to_i, 1)%>
+    <% end %>
+    
     <%= form_with(url: attendances_approval_record_user_path, method: :get, local:true) do |f| %>
       <%= f.submit "リセット" %><br>
-      <%= f.select :year, [Date.today.year, Date.today.prev_year.year], { include_blank: '年' } %>
-      <%= f.label params[:format].year %><br>
-      <%= f.select :month, 1..12, { include_blank: '月' } %>
+      <%= f.select :year, [Date.today.year, Date.today.prev_year.year], { include_blank: '年' }, class: "form-control-sm" %>
+      <%= f.text_field :selected_year, disabled: true, value:fix_date.year, class: "form-control-sm" %><br>
+      <%= f.select :month, 1..12, { include_blank: '月' }, class: "form-control-sm" %>
+      <%= f.text_field :selected_month, disabled: true, value:fix_date.month, class: "form-control-sm" %><br>
     <% end %>
   </div>
 </div>
@@ -27,8 +34,7 @@
       </tr>
     </thead>
 
-      <% attendances = Attendance.where(worked_on: params[:format].in_time_zone.all_month, user_id: params[:id], superior_status: "勤怠編集承認") %>
-
+        <% attendances = Attendance.where(worked_on: fix_date.in_time_zone.all_month, user_id: params[:id], superior_status: "勤怠編集承認") %>
     <tbody>
       <% attendances.each do |attendance| %>
         <tr>

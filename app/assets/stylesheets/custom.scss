@@ -97,6 +97,13 @@ p {
   }
 }
 
+.field_with_errors {
+  @extend .has-error;
+  .form-control1 {
+    color: $state-danger-text;
+  }
+}
+
 /* モーダルウインドウの位置調整 */
 
 .modal-dialog-center {

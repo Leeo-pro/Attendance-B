@@ -33,7 +33,7 @@
               <% end %>
             </td>
             <td><%= attendance.text_field :note, class: "form-control" %></td>
-            <td><%= attendance.collection_select :person3, User.all, :name, :name, { include_blank: true}, class: "form-control" %></td>
+            <td><%= attendance.collection_select :person3, User.where(superior: true), :name, :name, { include_blank: true}, class: "form-control" %></td>
           </tr>
         <% end %>
       <% end %>

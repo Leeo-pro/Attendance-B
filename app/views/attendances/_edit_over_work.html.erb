@@ -32,7 +32,7 @@
                 <td><%= f.check_box :overwork_next, {}, "true", "false" %></td>
                 <td><%= f.text_field :overwork %></td>
                 <td>
-                  <%= f.collection_select :person, User.all, :name, :name, { include_blank: true} %>
+                  <%= f.collection_select :person, User.where(superior: true), :name, :name, { include_blank: true} %>
                 </td>
               </tr>
           </tbody>

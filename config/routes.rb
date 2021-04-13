@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get 'attendances/edit_work_record_admit'
       patch 'attendances/update_work_record_admit'
       get 'attendances/approval_record'
+      get 'attendances/output'
 
     end
     collection do

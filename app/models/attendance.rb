@@ -18,7 +18,8 @@ class Attendance < ApplicationRecord
   validate :started_at_is_invalid_without_a_finished_at
   # 出勤・退勤時間どちらも存在する時、出勤時間より早い退勤時間は無効
   validate :started_at_than_finished_at_fast_if_invalid
-  
+  # 所属長承認申請-指示者欄が空白の場合は無効
+  validate :no_person
 
   def finished_at_is_invalid_without_a_started_at
     errors.add(:started_at, "が必要です") if started_at.blank? && finished_at.present?
@@ -36,8 +37,8 @@ class Attendance < ApplicationRecord
     end
   end
   
-  def test
-    errors.add(:over_work_end_time, "が空白です") if over_work_end_time.hour.blank?
+  def no_person
+    errors.add(:person2, "が空白です") if person2.blank?
   end
   
 end

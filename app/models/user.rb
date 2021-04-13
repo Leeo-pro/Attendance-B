@@ -56,7 +56,6 @@ class User < ApplicationRecord
   def forget
     update_attribute(:remember_digest, nil)
   end
-  
 
   def self.import(file)
     CSV.foreach(file.path, headers: true, encoding: 'Shift_JIS:UTF-8') do |row|
@@ -65,7 +64,6 @@ class User < ApplicationRecord
       user.save!
     end
   end
-  
 
   # 更新を許可するカラムを定義
   def self.updatable_attributes

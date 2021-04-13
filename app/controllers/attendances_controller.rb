@@ -4,12 +4,13 @@ class AttendancesController < ApplicationController
                                   :edit_one_month_approval, :update_one_month_approval, 
                                   :edit_one_month_admit, :update_one_month_admit,
                                   :edit_work_record_admit, :update_work_record_admit,
-                                  ]
+                                  :output]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_one_month, only: :edit_one_month
+  before_action :set_one_month, only: [:edit_one_month, :output]
   attr_accessor :collection
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
+  require 'csv'
   
   def update
     @user = User.find(params[:user_id])
@@ -87,7 +88,7 @@ class AttendancesController < ApplicationController
       params[:attendance][:over_work_end_time] = Time.new(year, month, day, hour, min, 0,).to_time.to_s
     end
 
-    params[:attendance][:superior_status] = "申請中" if params[:attendance][:person].present?
+    params[:attendance][:superior_status] = "#{params[:attendance][:person]}へ残業申請中" if params[:attendance][:person].present?
     params[:attendance][:change_status] = "false"
     
     if params[:attendance][:person].present? && params[:attendance][:over_work_end_time].present?
@@ -184,7 +185,18 @@ class AttendancesController < ApplicationController
   end
 
   def approval_record
-    
+  end
+  
+  def output
+    @first_day
+    @attendance = Attendance.new
+    @attendances = Attendance.where(worked_on: @first_day.to_date.in_time_zone.all_month, user_id: params[:id], superior_status: "勤怠編集承認")
+    respond_to do |format|
+      format.html
+      format.csv do |csv|
+        send_attendances_csv(@attendances)
+      end
+    end
   end
 
 private
@@ -210,5 +222,22 @@ private
       flash[:danger] = "編集権限がありません。"
       redirect_to(root_url)
     end
+  end
+  
+  def send_attendances_csv(attendances)
+    bom = "\uFEFF"
+    csv_data = CSV.generate(bom) do |csv|
+      column_names = %w(日付 出社 退社)
+      csv << column_names
+      attendances.each do |attendance|
+        column_values = [
+          attendance.worked_on,
+          l(attendance.started_at, format: :time),
+          l(attendance.finished_at, format: :time),
+          ]
+      csv << column_values
+      end
+    end
+    send_data(csv_data, filename: "出退勤一覧.csv")
   end
 end
