@@ -1,4 +1,5 @@
 class BasesController < ApplicationController
+  before_action :admin_user, only: [:index_area]
   
   def index_area
     @base = Base.new

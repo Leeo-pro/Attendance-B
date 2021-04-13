@@ -35,9 +35,9 @@
   
   <% else %>
     <% if @user.admin? || @user.superior? %>
-      <% cnt1 = Attendance.where(superior_status: "申請中", person: @user.name).count %>
+      <% cnt1 = Attendance.where('superior_status like ?','%残業申請中%').where(person: @user.name).count %>
       <% cnt2 = Attendance.where(superior_status2: nil, person2: @user.name).count %>
-      <% cnt3 = Attendance.where(superior_status: nil, person3: @user.name).count %>
+      <% cnt3 = Attendance.where('superior_status like ?','%変更申請中%').where(person3: @user.name).count %>
 
         <% if cnt2 > 0 %> 
           <%= link_to "【所属長承認申請のお知らせ】" , attendances_edit_one_month_admit_user_path(@user), remote: true, class: "navi-link"  %>
@@ -177,11 +177,11 @@
         <% when "2" %>
         <% else %>
         <td colspan="1">
-          <% status = Attendance.find_by(worked_on: @first_day, user_id: @user.id).superior_status2 %>
+          <% status = Attendance.find_by(worked_on: @first_day, user_id: @user.id).status %>
           <%= form_with(model: @attendance, url: attendances_update_one_month_approval_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
-            <%= "所属長承認　#{status}" %><br>
+            <%= "所属長承認#{status}" %><br>
             <%= f.hidden_field :apply_month, :value => @first_day %>
-            <%= f.collection_select :person2, User.where(superior: true), :name, :name, { include_blank: true} %>
+            <%= f.collection_select :person2, User.where(superior: true).where.not(id: current_user.id), :name, :name, { include_blank: true} %>
             <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
           <% end %>
         </td>

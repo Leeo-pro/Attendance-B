@@ -34,7 +34,7 @@
       </tr>
     </thead>
 
-        <% attendances = Attendance.where(worked_on: fix_date.in_time_zone.all_month, user_id: params[:id], superior_status: "勤怠編集承認") %>
+        <% attendances = Attendance.where(worked_on: fix_date.in_time_zone.all_month, user_id: params[:id]).where("superior_status like ?","%承認%") %>
     <tbody>
       <% attendances.each do |attendance| %>
         <tr>

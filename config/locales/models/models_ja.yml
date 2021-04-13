@@ -45,6 +45,7 @@ ja:
         before_started_at: 変更直前出勤時間
         before_finished_at: 変更直前退勤時間
         approval_day: 承認日
+        status: 申請状況
       base:
         base_number: 拠点番号
         base_name: 拠点名

@@ -40,6 +40,10 @@ class AttendancesController < ApplicationController
         attendances_params.each do |id, item|
           attendance = Attendance.find(id)
           
+          if item[:started_at].present? && item[:finished_at].present? && item[:person3].present? 
+            attendance.superior_status = "#{item[:person3]}へ勤怠変更申請中"
+          end
+          
           if attendance.before_started_at.nil? && attendance.started_at.nil?
             attendance.restarted_at = item[:started_at]
           elsif attendance.before_started_at.nil? && attendance.started_at.present?
@@ -103,8 +107,8 @@ class AttendancesController < ApplicationController
   end
 
   def edit_over_work_day_approval
-    @notice_users =  User.where(id: Attendance.where(superior_status: "申請中", person: @user.name).select(:user_id))
-    @attendance_lists = Attendance.where(superior_status: "申請中", person: @user.name)
+    @notice_users =  User.where(id: Attendance.where("superior_status like ?","%申請中%").where(person: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where("superior_status like ?","%申請中%").where(person: @user.name)
     @attendance = Attendance.find(params[:id]) 
   end
   
@@ -126,13 +130,19 @@ class AttendancesController < ApplicationController
   end
   
   def update_one_month_approval
+    if params[:person2].blank?
+      flash[:danger] = "承認先が選択されていません"
+    else
      @user = User.find(params[:id])
      @attendance = Attendance.find_by(user_id: params[:id], worked_on: params[:apply_month])
      @attendance.person2 = params[:person2]
      @attendance.apply_month = params[:apply_month]
+     @attendance.status = "：#{params[:person2]}へ所属長承認申請中"
+     @attendance.superior_status2 = nil
      @attendance.save
 
      flash[:success] = "承認申請が完了しました"
+    end
      redirect_to user_url(@user, order_sort: 1)
   end
 
@@ -149,6 +159,7 @@ class AttendancesController < ApplicationController
          
         attendance.change_status2 = item[:change_status2]
         attendance.superior_status2 = item[:superior_status2]
+        attendance.status = "：#{@user.name}#{item[:superior_status2]}"
         attendance.save
       end    
     end
@@ -188,9 +199,8 @@ class AttendancesController < ApplicationController
   end
   
   def output
-    @first_day
     @attendance = Attendance.new
-    @attendances = Attendance.where(worked_on: @first_day.to_date.in_time_zone.all_month, user_id: params[:id], superior_status: "勤怠編集承認")
+    @attendances = Attendance.where(worked_on: @first_day.to_date.in_time_zone.all_month, user_id: params[:id]).where("superior_status like ?","%承認%")
     respond_to do |format|
       format.html
       format.csv do |csv|

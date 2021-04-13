@@ -2,12 +2,14 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_all, :edit_over_work_day_approval, :update_over_work_day_approval]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_all]
   before_action :correct_user, only: [:show, :edit, :update]
-  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_all]
+  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, 
+                :edit_basic_all, :index_attendance]
   before_action :set_one_month, only: :show
+  before_action :self_check, only: :show
   
   def index
     @user = User.new
-    @users = User.paginate(page: params[:page], per_page: 20)
+    @users = User.where.not(id: current_user.id).paginate(page: params[:page], per_page: 20)
     if params[:name].present?
       @users = @users.get_by_name params[:name]
     end
