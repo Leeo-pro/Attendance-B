@@ -22,8 +22,8 @@ ActiveRecord::Schema.define(version: 20210413214353) do
     t.datetime "updated_at", null: false
     t.string "overwork"
     t.string "person"
-    t.datetime "over_work_end_time"
     t.text "overwork_next"
+    t.datetime "over_work_end_time"
     t.string "superior_status"
     t.boolean "change_status"
     t.string "superior_status2"
@@ -61,8 +61,8 @@ ActiveRecord::Schema.define(version: 20210413214353) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2021-04-13 23:00:00"
-    t.datetime "work_time", default: "2021-04-13 22:30:00"
+    t.datetime "basic_work_time", default: "2021-04-14 23:00:00"
+    t.datetime "work_time", default: "2021-04-14 22:30:00"
     t.integer "employee_number"
     t.string "uid"
     t.datetime "designated_work_start_time"
