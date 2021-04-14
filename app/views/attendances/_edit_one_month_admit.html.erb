@@ -27,10 +27,10 @@
                 <tr>
                   <td><%= attendance.apply_month.strftime("%-m月") %></td>
                   <td>
-                    <%= list.select :superior_status2, [['なし'], ['申請中'], ['承認'], ['否認']], { include_blank: attendance.superior_status2 } %>
+                    <%= list.select :superior_status2, [['なし'], ['申請中'], ['承認'], ['否認']], { selected: attendance.superior_status2 } %>
                   </td>
                   <td><%= list.check_box :change_status2, {checked: "false"}, "true", "false" %></td>
-                  <td><%= link_to "月間確認", user_path(user.id, date: attendance.worked_on, order_sort: 2), class: "btn btn-primary" %></td>
+                  <td><%= link_to "確認", user_path(user.id, date: attendance.worked_on, order_sort: 2), class: "btn btn-primary" %></td>
                 </tr>
               </tbody>
                 <% end %>

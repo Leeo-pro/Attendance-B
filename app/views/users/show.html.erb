@@ -35,10 +35,10 @@
   
   <% else %>
     <% if @user.admin? || @user.superior? %>
-      <% cnt1 = Attendance.where('superior_status like ?','%残業申請中%').where(person: @user.name).count %>
-      <% cnt2 = Attendance.where(superior_status2: nil, person2: @user.name).count %>
-      <% cnt3 = Attendance.where('superior_status like ?','%変更申請中%').where(person3: @user.name).count %>
-
+      <% cnt2 = Attendance.where(superior_status2: "申請中", person2: @user.name).count %>
+      <% cnt3 = Attendance.where(superior_status3: "申請中", person3: @user.name).count %>
+      <% cnt4 = Attendance.where(superior_status4: "申請中", person: @user.name).count %>
+      
         <% if cnt2 > 0 %> 
           <%= link_to "【所属長承認申請のお知らせ】" , attendances_edit_one_month_admit_user_path(@user), remote: true, class: "navi-link"  %>
             <div style="display:inline-block; border: 3px solid #f30; color: #f30;">
@@ -57,10 +57,10 @@
           <%= "【勤怠変更申請のお知らせ】" %><br>
         <% end %>
 
-        <% if cnt1 > 0 %> 
+        <% if cnt4 > 0 %> 
           <%= link_to "【残業申請のお知らせ】" , attendances_edit_over_work_day_approval_user_path(@user), remote: true, class: "navi-link"  %>
             <div style="display:inline-block; border: 3px solid #f30; color: #f30;">
-          <%= link_to "#{cnt1}件の通知があります", attendances_edit_over_work_day_approval_user_path(@user), remote: true, class: "navi-link2" %>
+          <%= link_to "#{cnt4}件の通知があります", attendances_edit_over_work_day_approval_user_path(@user), remote: true, class: "navi-link2" %>
             </div><br>
         <% else %>
           <%= "【残業申請のお知らせ】" %><br>

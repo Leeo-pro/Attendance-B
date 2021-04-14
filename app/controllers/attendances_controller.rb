@@ -39,11 +39,7 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
         attendances_params.each do |id, item|
           attendance = Attendance.find(id)
-          
-          if item[:started_at].present? && item[:finished_at].present? && item[:person3].present? 
-            attendance.superior_status = "#{item[:person3]}へ勤怠変更申請中"
-          end
-          
+
           if attendance.before_started_at.nil? && attendance.started_at.nil?
             attendance.restarted_at = item[:started_at]
           elsif attendance.before_started_at.nil? && attendance.started_at.present?
@@ -58,6 +54,12 @@ class AttendancesController < ApplicationController
           elsif attendance.before_finished_at.present? && attendance.finished_at.present?
             attendance.before_finished_at = attendance.finished_at
           end
+
+          if item[:started_at].present? && item[:finished_at].present? && item[:person3].present? 
+            attendance.superior_status = "#{item[:person3]}へ勤怠変更申請中"
+            attendance.superior_status3 = "申請中"
+          end
+
           attendance.update_attributes!(item)
         end
         flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
@@ -94,6 +96,8 @@ class AttendancesController < ApplicationController
 
     params[:attendance][:superior_status] = "#{params[:attendance][:person]}へ残業申請中" if params[:attendance][:person].present?
     params[:attendance][:change_status] = "false"
+    params[:attendance][:superior_status4] = "申請中"
+    params[:attendance][:person3] = params[:attendance][:person]
     
     if params[:attendance][:person].present? && params[:attendance][:over_work_end_time].present?
       @attendance.update_attributes(overwork_params)
@@ -107,8 +111,8 @@ class AttendancesController < ApplicationController
   end
 
   def edit_over_work_day_approval
-    @notice_users =  User.where(id: Attendance.where("superior_status like ?","%申請中%").where(person: @user.name).select(:user_id))
-    @attendance_lists = Attendance.where("superior_status like ?","%申請中%").where(person: @user.name)
+    @notice_users =  User.where(id: Attendance.where(superior_status4: "申請中", person: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(superior_status4: "申請中", person: @user.name)
     @attendance = Attendance.find(params[:id]) 
   end
   
@@ -116,9 +120,10 @@ class AttendancesController < ApplicationController
     params[:attendance][:attendances].each do |id, item|
       attendance = Attendance.find(id)
       if item[:change_status] == "true"
-         
+        attendance.approval_day = Date.current 
         attendance.change_status = item[:change_status]
-        attendance.superior_status = item[:superior_status]
+        attendance.superior_status = "残業申請#{item[:superior_status4]}"
+        attendance.superior_status4 = item[:superior_status4]
         attendance.save
       end
     end
@@ -138,7 +143,7 @@ class AttendancesController < ApplicationController
      @attendance.person2 = params[:person2]
      @attendance.apply_month = params[:apply_month]
      @attendance.status = "：#{params[:person2]}へ所属長承認申請中"
-     @attendance.superior_status2 = nil
+     @attendance.superior_status2 = "申請中"
      @attendance.save
 
      flash[:success] = "承認申請が完了しました"
@@ -147,8 +152,8 @@ class AttendancesController < ApplicationController
   end
 
   def edit_one_month_admit
-    @notice_users =  User.where(id: Attendance.where(superior_status2: nil, person2: @user.name).select(:user_id))
-    @attendance_lists = Attendance.where(superior_status2: nil, person2: @user.name)
+    @notice_users =  User.where(id: Attendance.where(superior_status2: "申請中", person2: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(superior_status2: "申請中", person2: @user.name)
     @attendance = Attendance.find(params[:id]) 
   end
   
@@ -156,7 +161,7 @@ class AttendancesController < ApplicationController
     params[:attendance][:attendances].each do |id, item|
       attendance = Attendance.find(id)
       if item[:change_status2] == "true"
-         
+        attendance.approval_day = Date.current 
         attendance.change_status2 = item[:change_status2]
         attendance.superior_status2 = item[:superior_status2]
         attendance.status = "：#{@user.name}#{item[:superior_status2]}"
@@ -168,8 +173,8 @@ class AttendancesController < ApplicationController
   end
   
   def edit_work_record_admit
-    @notice_users =  User.where(id: Attendance.where(superior_status: nil, person3: @user.name).select(:user_id))
-    @attendance_lists = Attendance.where(superior_status: nil, person3: @user.name)
+    @notice_users =  User.where(id: Attendance.where(superior_status3: "申請中", person3: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(superior_status3: "申請中", person3: @user.name)
     @attendance = Attendance.find(params[:id]) 
     
     if params[:started_at].present?
@@ -187,7 +192,8 @@ class AttendancesController < ApplicationController
       if item[:change_status] == "true"
         attendance.approval_day = Date.current
         attendance.change_status = item[:change_status]
-        attendance.superior_status = "勤怠編集#{item[:superior_status]}"
+        attendance.superior_status = "勤怠編集#{item[:superior_status3]}"
+        attendance.superior_status3 = item[:superior_status3]
         attendance.save
       end    
     end
@@ -216,7 +222,7 @@ private
   end
 
   def overwork_params
-    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :over_work_end_time, :superior_status, :change_status)
+    params.require(:attendance).permit(:worked_on, :overwork, :overwork_next, :person, :person3, :over_work_end_time, :superior_status, :change_status, :superior_status4)
   end
 
   def reply_overtime_params
@@ -240,10 +246,13 @@ private
       column_names = %w(日付 出社 退社)
       csv << column_names
       attendances.each do |attendance|
+        
+        attendance.started_at.present? ? start_time = l(attendance.started_at, format: :time) : start_time = ""
+        attendance.started_at.present? ? end_time = l(attendance.started_at, format: :time) : end_time = ""
         column_values = [
           attendance.worked_on,
-          l(attendance.started_at, format: :time),
-          l(attendance.finished_at, format: :time),
+          start_time,
+          end_time,
           ]
       csv << column_values
       end

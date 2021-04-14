@@ -13,7 +13,7 @@
     <div class="modal-body">
       <div>
         <table class="table table-bordered table-condensed table-hover" id="table-overwork-day">
-          <h1 class="modal-title">【 <%= user.name %>からの残業申請】</h1>
+          <h1 class="modal-title">【 <%= user.name %>からの勤怠変更申請】</h1>
             <thead>
               <tr>
                 <th rowspan="3">日付</th>
@@ -58,10 +58,10 @@
                   <td><%= attendance.finished_at.min if attendance.finished_at.present? %></td>
                   <td><%= attendance.note %></td>
                   <td>
-                    <%= list.select :superior_status, [['なし'], ['申請中'], ['承認'], ['否認']], { include_blank: attendance.superior_status } %>
+                    <%= list.select :superior_status3, [['なし'], ['申請中'], ['承認'], ['否認']], { selected: attendance.superior_status3 } %>
                   </td>
                   <td><%= list.check_box :change_status, {checked: "false"}, "true", "false" %></td>
-                  <td><%= link_to "勤怠確認", user_path(user.id, date: attendance.worked_on.beginning_of_month, order_sort: 2), class: "btn btn-primary" %></td>
+                  <td><%= link_to "確認", user_path(user.id, date: attendance.worked_on.beginning_of_month, order_sort: 2), class: "btn btn-primary" %></td>
                 </tr>
               </tbody>
                 <% end %>
