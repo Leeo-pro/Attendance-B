@@ -3,7 +3,7 @@
 これはセレブエンジニアサロンの教材で作られたサンプルアプリケーションです。
 
 ## 開発環境
-公開用URL　https://fathomless-earth-32302.herokuapp.com
+公開用URL(Heroku)　https://fathomless-earth-32302.herokuapp.com
 * AWS Cloud9<br>
 * Ruby<br>
 * Rails<br>
