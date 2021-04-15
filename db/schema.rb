@@ -23,7 +23,6 @@ ActiveRecord::Schema.define(version: 20210413214353) do
     t.string "overwork"
     t.string "person"
     t.text "overwork_next"
-    t.datetime "over_work_end_time"
     t.string "superior_status"
     t.boolean "change_status"
     t.string "superior_status2"
