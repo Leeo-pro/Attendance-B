@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20210413214353) do
     t.string "status"
     t.string "superior_status3"
     t.string "superior_status4"
+    t.time "over_work_end_time"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
