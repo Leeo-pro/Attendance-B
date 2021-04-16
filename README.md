@@ -8,4 +8,4 @@
 * Ruby<br>
 * Rails<br>
 * Git(HTTPSからSSH通信へ変更)
-* 
+* https://jonconan.site/technical/569

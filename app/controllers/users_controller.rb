@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, 
                 :edit_basic_all, :index_attendance]
   before_action :set_one_month, only: :show
-  before_action :self_check, only: :show
+  
   
   def index
     @user = User.new
