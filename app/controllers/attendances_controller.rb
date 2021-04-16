@@ -59,7 +59,6 @@ class AttendancesController < ApplicationController
             attendance.superior_status = "#{item[:person3]}へ勤怠変更申請中"
             attendance.superior_status3 = "申請中"
           end
-
           attendance.update_attributes!(item)
         end
         flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
@@ -125,10 +124,13 @@ class AttendancesController < ApplicationController
         attendance.superior_status = "残業申請#{item[:superior_status4]}"
         attendance.superior_status4 = item[:superior_status4]
         attendance.save
+        flash[:success] = "承認申請が完了しました"
+      else
+        flash[:danger] = "承認処理が完了していない申請があります。再度ご確認ください"
       end
     end
-    flash[:success] = "承認申請が完了しました"
-    redirect_to user_url(@user, order_sort: 1)
+        redirect_to user_url(@user, order_sort: 1)
+
   end 
 
   def edit_one_month_approval
@@ -166,9 +168,11 @@ class AttendancesController < ApplicationController
         attendance.superior_status2 = item[:superior_status2]
         attendance.status = "：#{@user.name}#{item[:superior_status2]}"
         attendance.save
+        flash[:success] = "承認申請が完了しました"
+      else
+        flash[:danger] = "承認処理が完了していない申請があります。再度ご確認ください"      
       end    
     end
-    flash[:success] = "承認申請が完了しました"
     redirect_to user_url(@user, order_sort: 1)
   end
   
@@ -195,9 +199,11 @@ class AttendancesController < ApplicationController
         attendance.superior_status = "勤怠編集#{item[:superior_status3]}"
         attendance.superior_status3 = item[:superior_status3]
         attendance.save
+        flash[:success] = "承認申請が完了しました"
+      else
+        flash[:danger] = "承認処理が完了していない申請があります。再度ご確認ください"      
       end    
     end
-    flash[:success] = "承認申請が完了しました"
     redirect_to user_url(@user, order_sort: 1)
   end
 

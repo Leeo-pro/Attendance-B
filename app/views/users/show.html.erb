@@ -32,7 +32,6 @@
   </table>
   <% case num %>
   <% when "2" %>
-  
   <% else %>
     <% if @user.admin? || @user.superior? %>
       <% cnt2 = Attendance.where(superior_status2: "申請中", person2: @user.name).count %>
@@ -137,18 +136,26 @@
           <td><%= day.started_at.hour if day.started_at.present? %></td>
           <td><%= day.started_at.min if day.started_at.present? %></td>
           <td>
+          <% case num %>
+          <% when "2" %>
+          <% else %>
             <% if Date.current == day.worked_on && day.started_at.nil? %>
               <%= link_to "出社", user_attendance_path(@user, day),
               method: :patch, class: "btn btn-default btn-attendance active" %>
             <% end %>
+          <% end %>
           </td>
           <td><%= day.finished_at.hour if day.finished_at.present? %></td>
           <td><%= day.finished_at.min if day.finished_at.present? %></td>
           <td>
+          <% case num %>
+          <% when "2" %>
+          <% else %>
             <% if Date.current == day.worked_on && day.started_at.present? && day.finished_at.nil? %>
               <%= link_to "退社", user_attendance_path(@user, day),
               method: :patch, class: "btn btn-default btn-attendance active" %>
             <% end %>
+          <% end %>
           </td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>

@@ -7,6 +7,7 @@ User.create!(
              email: "admin@email.com",
              password: "password",
              password_confirmation: "password",
+             employee_number: 1,
              admin: true,
     },
     {
@@ -14,6 +15,7 @@ User.create!(
              email: "superior-a@email.com",
              password: "password",
              password_confirmation: "password",
+             employee_number: 2,
              superior: true,
     },
     {
@@ -21,6 +23,7 @@ User.create!(
              email: "superior-b@email.com",
              password: "password",
              password_confirmation: "password",
+             employee_number: 3,
              superior: true,
     }
   ]
@@ -30,8 +33,10 @@ User.create!(
   name = Faker::Name.name
   email = "sample-#{n+1}@email.com"
   password = "password"
+  employee_number = "#{n+1}"
   User.create!(name: name,
                email: email,
                password: password,
-               password_confirmation: password)
+               password_confirmation: password,
+               employee_number: employee_number)
 end
