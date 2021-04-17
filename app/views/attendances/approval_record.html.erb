@@ -36,7 +36,7 @@
 
         <% attendances = Attendance
                           .where(worked_on: fix_date.in_time_zone.all_month, user_id: params[:id]).where("superior_status like ?","%承認%")
-                          .or(Attendance.where(worked_on: fix_date.in_time_zone.all_month, user_id: params[:id], superior_status: nil).where.not(finished_at: nil)) %>
+                          .or(Attendance.where(worked_on: fix_date.in_time_zone.all_month, user_id: params[:id], superior_status: nil).where.not(finished_at: nil)).order(:worked_on) %>
     <tbody>
       <% attendances.each do |attendance| %>
         <tr>

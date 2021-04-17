@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
     def correct_user
       if current_user?(@user) && !current_user.superior && !current_user.admin && current_user.superior != @user.superior?
       elsif current_user?(@user) && current_user.superior && !current_user.admin && current_user.superior == @user.superior?
-      elsif current_user != @user && current_user.superior && !current_user.admin && current_user.superior != @user.superior?
+      elsif current_user != @user && current_user.superior && !current_user.admin && current_user.superior != @user.superior? && params[:order_sort] == "2"
       elsif current_user?(@user) && !current_user.admin
       elsif current_user.admin
         redirect_to users_url
