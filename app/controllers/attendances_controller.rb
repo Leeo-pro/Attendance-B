@@ -213,6 +213,7 @@ class AttendancesController < ApplicationController
   def output
     @attendance = Attendance.new
     @attendances = Attendance.where(worked_on: @first_day.to_date.in_time_zone.all_month, user_id: params[:id]).where("superior_status like ?","%承認%")
+                             .or(Attendance.where(worked_on: @first_day.to_date.in_time_zone.all_month, user_id: params[:id], superior_status: nil).where.not(finished_at: nil)).order(:worked_on)
     respond_to do |format|
       format.html
       format.csv do |csv|
@@ -254,7 +255,7 @@ private
       attendances.each do |attendance|
         
         attendance.started_at.present? ? start_time = l(attendance.started_at, format: :time) : start_time = ""
-        attendance.started_at.present? ? end_time = l(attendance.started_at, format: :time) : end_time = ""
+        attendance.finished_at.present? ? end_time = l(attendance.finished_at, format: :time) : end_time = ""
         column_values = [
           attendance.worked_on,
           start_time,
