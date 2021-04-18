@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :login_check, only: :create
+  
   def new
   end
   

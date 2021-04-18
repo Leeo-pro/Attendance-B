@@ -10,6 +10,13 @@ class ApplicationController < ActionController::Base
     def set_user
       @user = User.find(params[:id])
     end
+    
+    def login_check
+      if !current_user.nil?
+        flash[:danger] = "すでにログインしています"
+        redirect_to(root_url) 
+      end
+    end
 
     # ログイン済みのユーザーか確認します。
     def logged_in_user
