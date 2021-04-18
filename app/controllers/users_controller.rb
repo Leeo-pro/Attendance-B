@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   
   def index
     @user = User.new
-    @users = User.where.not(id: current_user.id).paginate(page: params[:page], per_page: 20)
+    @users = User.where.not(id: current_user.id).paginate(page: params[:page], per_page: 20).order(:id)
     if params[:name].present?
       @users = @users.get_by_name params[:name]
     end
